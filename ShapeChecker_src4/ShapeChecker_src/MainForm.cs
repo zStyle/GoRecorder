@@ -223,7 +223,7 @@ namespace ShapeChecker
                     if (line.Theta > 80 && line.Theta < 100)
                     {
                         x0 = -w2; // most left point
-                        x1 = w2;  // most right point
+                        x1 = w2;  // most right point6
 
                         y0 = (-Math.Cos(t) * x0 + r) / Math.Sin(t);
                         y1 = (-Math.Cos(t) * x1 + r) / Math.Sin(t);
@@ -386,9 +386,9 @@ namespace ShapeChecker
             }
 
             Pen redPen = new Pen(Color.Red, 4);
-            for (int i = 8; i < 11; i++)
+            for (int i = 0; i < 19; i++)
             {
-                for (int j = 8; j < 11; j++)
+                for (int j = 0; j < 5; j++)
                 {
                     g.DrawEllipse(redPen, Math.Abs(intersectPoint[0, i, j]) - 2, Math.Abs(intersectPoint[1, i, j]) - 2, (int)5, (int)5);
                     //g.DrawEllipse(redPen, 0, 0, (int)5, (int)5);
