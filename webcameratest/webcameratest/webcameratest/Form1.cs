@@ -15,6 +15,7 @@ using AForge.Imaging;
 using AForge.Imaging.Filters;
 //using AForge.Imaging.ColorReduction;
 using AForge.Math.Geometry;
+using AForge.Vision.Motion;
 namespace webcameratest
 {
     public partial class Form1 : Form
@@ -22,6 +23,9 @@ namespace webcameratest
         private bool ExistenDispositive = false;
         private FilterInfoCollection DispositiveVideo;
         private VideoCaptureDevice FuenteVideo = null;
+        public bool locked = false;
+        public int[, ,] intersectPoint = new int[2, 19, 19];
+
         public void CargarDispositive(FilterInfoCollection Dispositive) {
             for (int i = 0; i < Dispositive.Count; i++) {
                 cboDispositive.Items.Add(Dispositive[i].Name.ToString());
@@ -52,13 +56,15 @@ namespace webcameratest
             Bitmap Image = (Bitmap)eventArgs.Frame.Clone();
             //Got Image
 
-            
+            if (!locked)
+            {
+                ProcessImage(Image);
+            }
+            else
+            {
+                EspacioCamera.Image = Image;
 
-           
-
-    
-            ProcessImage(Image);
-
+            }
             //EspacioCamera.Image = Image;
         }
 
@@ -394,13 +400,13 @@ namespace webcameratest
             // apply the filter
             filter.ApplyInPlace(grayImage);
 
-            int[, ,] intersectPoint = new int[2, 19, 19];
+           
             if (GetIntersect(grayImage, bitmap, intersectPoint)) {
                 //MessageBox.Show("draw");
                 Graphics g = Graphics.FromImage(bitmap);
                 //Sorting
                 
-                /*
+                
                 for (int i = 0; i < 19; i++)
                 {
                     for (int j = 0; j < 19; j++)
@@ -439,7 +445,7 @@ namespace webcameratest
                         }
                     }
                 }
-                */
+                
                 Pen redPen = new Pen(Color.Red, 4);
                 for (int i = 0; i < 19; i++)
                 {
@@ -457,9 +463,28 @@ namespace webcameratest
                 greenPen.Dispose();
                 redPen.Dispose();
                 g.Dispose();
+
+                // Initializes the variables to pass to the MessageBox.Show method.
+                EspacioCamera.Image = bitmap;
+                string message = "Do you accecpt this detection?";
+                string caption = "The system found totally 38 lines.";
+                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                DialogResult result;
+
+                // Displays the MessageBox.
+
+                result = MessageBox.Show(message, caption, buttons);
+
+                if (result == System.Windows.Forms.DialogResult.Yes)
+                {
+                    // Closes the parent form.
+                    locked = true;
+                }
             }
 
             EspacioCamera.Image = bitmap;
+            
+
         }
     }
 }
